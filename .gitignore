@@ -1,0 +1,10 @@
+.env
+venv/
+jayagent/
+__pycache__/
+*.mp3
+*.wav
+reel/
+skills/
+overview_audio.mp3
+.DS_Store
