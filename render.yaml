@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: jays-cool-instagram-transcribe
+    env: python
+    plan: starter
+    buildCommand: pip install -r requirements_new.txt
+    startCommand: streamlit run transcribe_enhanced_v2.py --server.port $PORT --server.address 0.0.0.0
+    autoDeploy: true
