@@ -3,7 +3,6 @@ import sys
 import json
 import time
 import shutil
-import base64
 from datetime import datetime
 
 import yt_dlp
@@ -215,64 +214,6 @@ def detect_scenes(video_path, out_dir):
     return out_path
 
 
-def generate_kling_storyboard_basic(client, video_path, out_dir):
-    """Lightweight Kling storyboard test using 4 sampled frames."""
-    clip = VideoFileClip(video_path)
-    duration = clip.duration
-    timestamps = [0, min(3, duration), min(6, duration), min(9, duration)]
-    unique_ts = sorted(set(timestamps))
-    shots = []
-
-    for t in unique_ts:
-        frame_path = os.path.join(out_dir, f"_kling_frame_{int(t)}.jpg")
-        clip.save_frame(frame_path, t=t)
-        with open(frame_path, "rb") as f:
-            b64 = f.read()
-        shots.append({"t": t, "path": frame_path, "b64": b64})
-
-    clip.close()
-
-    storyboard = []
-    for i, shot in enumerate(shots):
-        prompt_content = [
-            {
-                "type": "text",
-                "text": (
-                    "You are a professional AI video director writing Kling AI Story Mode prompts. "
-                    "Describe ONLY what you see. Output one prompt using: "
-                    "[Subject doing X], [setting], [camera move], [lighting], [mood], cinematic, photorealistic, 4K."
-                ),
-            },
-            {
-                "type": "image_url",
-                "image_url": {"url": f"data:image/jpeg;base64,{base64.b64encode(shot['b64']).decode('utf-8')}"},
-            },
-        ]
-
-        resp = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[{"role": "user", "content": prompt_content}],
-            max_tokens=220,
-        )
-        storyboard.append({
-            "shot": i + 1,
-            "timestamp": shot["t"],
-            "prompt": resp.choices[0].message.content.strip(),
-        })
-
-    # Cleanup frames
-    for shot in shots:
-        try:
-            os.remove(shot["path"])
-        except Exception:
-            pass
-
-    out_path = os.path.join(out_dir, "kling_storyboard.json")
-    with open(out_path, "w") as f:
-        json.dump(storyboard, f, indent=2)
-    return out_path
-
-
 def save_to_supabase(url, text, summary, metadata):
     supa_url = os.getenv("SUPABASE_URL")
     supa_key = os.getenv("SUPABASE_KEY")
@@ -396,13 +337,6 @@ if __name__ == "__main__":
         log_step("Detect scenes", True, scenes_path)
     except Exception as e:
         log_step("Detect scenes", False, str(e))
-
-    # Step 6b: Kling storyboard (basic)
-    try:
-        storyboard_path = generate_kling_storyboard_basic(client, video_meta["video_path"], out_dir)
-        log_step("Generate Kling storyboard", True, storyboard_path)
-    except Exception as e:
-        log_step("Generate Kling storyboard", False, str(e))
 
     # Step 7: PDF and PPTX
     if summary:
