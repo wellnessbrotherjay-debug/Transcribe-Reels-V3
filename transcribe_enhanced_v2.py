@@ -1151,6 +1151,10 @@ with st.sidebar:
         # Filter by search
         filtered_sources = [s for s in all_sources if search_q.lower() in s.get('metadata', {}).get('title', s['url']).lower()] if search_q else all_sources
         
+        # Auto-select the most recent source if none selected
+        if not st.session_state.get('selected_source_id') and filtered_sources:
+            st.session_state['selected_source_id'] = filtered_sources[0]['id']
+
         for s in filtered_sources:
             title = s.get('metadata', {}).get('title', s['url'][:20])
             is_active = (st.session_state.get('selected_source_id') == s['id'])
