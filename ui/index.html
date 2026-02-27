@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jay’s Cool Instagram Transcribe</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --card: #111a33;
+      --blue: #3aa0ff;
+      --blue-2: #6cc2ff;
+      --text: #e9f0ff;
+      --muted: #a7b4d6;
+      --accent: #1e2a52;
+      --glow: rgba(58, 160, 255, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(58,160,255,0.35), transparent),
+                  radial-gradient(900px 500px at 90% 0%, rgba(108,194,255,0.25), transparent),
+                  var(--bg);
+      min-height: 100vh;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 20px 80px;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      box-shadow: 0 8px 24px var(--glow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 28px;
+      letter-spacing: 0.3px;
+    }
+
+    .tagline {
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .cta {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 12px 18px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      color: var(--text);
+      background: linear-gradient(135deg, var(--blue), var(--blue-2));
+      box-shadow: 0 10px 28px var(--glow);
+    }
+
+    .btn.secondary {
+      background: transparent;
+      border-color: #2a3a6a;
+      color: var(--text);
+      box-shadow: none;
+    }
+
+    .hero {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    .hero h2 {
+      font-size: 40px;
+      margin: 0 0 12px;
+      line-height: 1.1;
+    }
+
+    .hero p {
+      margin: 0 0 18px;
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.6;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(17,26,51,0.9), rgba(12,19,38,0.9));
+      border: 1px solid #1e2a52;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .stat {
+      padding: 14px;
+      border-radius: 12px;
+      background: #0e1630;
+      border: 1px solid #1d2a56;
+      text-align: center;
+    }
+
+    .stat .value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .stat .label {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .features {
+      margin-top: 48px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .feature {
+      padding: 18px;
+      border-radius: 14px;
+      background: #0f1733;
+      border: 1px solid #1f2c58;
+    }
+
+    .feature h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 60px;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+    }
+
+    @media (max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      .features {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <div class="logo"></div>
+        <div>
+          <h1>Jay’s Cool Instagram Transcribe</h1>
+          <div class="tagline">Turn reels into transcripts, insights, and reusable content in minutes.</div>
+        </div>
+      </div>
+      <div class="cta">
+        <a class="btn" href="#start">Launch App</a>
+        <a class="btn secondary" href="#features">See Features</a>
+      </div>
+    </div>
+
+    <section class="hero" id="start">
+      <div>
+        <h2>Transcribe, Analyze, and Repurpose Reels.</h2>
+        <p>Upload an Instagram reel, get a clean transcript, discover viral hooks, generate reports, podcasts, slides, and a storyboard—all in one modern, blue‑toned workspace.</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="value">10+</div>
+            <div class="label">Output Formats</div>
+          </div>
+          <div class="stat">
+            <div class="value">4</div>
+            <div class="label">AI Engines</div>
+          </div>
+          <div class="stat">
+            <div class="value">1</div>
+            <div class="label">Clean Workflow</div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>What you get</h3>
+        <ul style="margin: 12px 0 0; padding-left: 18px; color: var(--muted); line-height: 1.7;">
+          <li>Full transcript + editing</li>
+          <li>Viral analysis + hook variations</li>
+          <li>Mind maps + timelines</li>
+          <li>Reports, slides, PDF guides</li>
+          <li>Podcast scripts + audio</li>
+          <li>Storyboard + recreate plan</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="features" id="features">
+      <div class="feature">
+        <h3>Smart Transcription</h3>
+        <p>Local Whisper or cloud engines with a clean, editable transcript.</p>
+      </div>
+      <div class="feature">
+        <h3>Viral Breakdown</h3>
+        <p>Analyze why it works, identify hooks, and generate better ones.</p>
+      </div>
+      <div class="feature">
+        <h3>Creator Studio</h3>
+        <p>Create slides, PDFs, storyboards, and multi‑video campaigns.</p>
+      </div>
+    </section>
+
+    <div class="footer">© 2026 Jay’s Cool Instagram Transcribe</div>
+  </div>
+</body>
+</html>

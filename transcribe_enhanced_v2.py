@@ -1,6 +1,29 @@
-from moviepy import VideoFileClip
+import warnings
 import os
+import sys
+import logging
+
+# CRITICAL: Suppress warnings BEFORE any other imports
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=DeprecationWarning)
+warnings.filterwarnings("ignore", category=Warning)
+
+# Set environment variables to suppress warnings
+os.environ['PYTHONWARNINGS'] = 'ignore::FutureWarning'
+os.environ['PYTHONWARNINGS'] = 'ignore::DeprecationWarning'
+os.environ['GRPC_VERBOSITY'] = 'ERROR'
+os.environ['GLOG_minloglevel'] = '3'
+
+# Configure root logger to suppress warnings
+logging.getLogger().setLevel(logging.ERROR)
+logging.getLogger('google').setLevel(logging.ERROR)
+logging.getLogger('google.auth').setLevel(logging.CRITICAL)
+logging.getLogger('google.oauth2').setLevel(logging.CRITICAL)
+
+# Now import with warnings suppressed
+from moviepy import VideoFileClip
 import streamlit as st
+
 # ENABLE WIDE MODE (Must be first Streamlit command)
 st.set_page_config(page_title="Viral Engine v2", layout="wide", initial_sidebar_state="expanded")
 
@@ -12,7 +35,17 @@ from dotenv import load_dotenv
 import json
 import io
 import requests
-import google.generativeai as genai
+
+# Import Google Gemini with maximum warning suppression
+with warnings.catch_warnings():
+    warnings.simplefilter("ignore")
+    import google.generativeai as genai
+
+# Configure gemini logging
+import google.auth
+logging.getLogger('google.auth').disabled = True
+logging.getLogger('google.oauth2').disabled = True
+
 from PIL import Image
 try:
     import whisper
@@ -722,11 +755,11 @@ else:
     openai_client = None
 
 # Custom CSS for "Jay's Cheat Model" Theme (Red/Black Hacker Vibe)
-# --- 🧠 MASTER NOTEBOOK LM CLONE (UX ARCHITECTURE REBUILD)
+# --- 🧠 MASTER NOTEBOOK LM CLONE (UX ARCHITECTURE REBUILD) + ENHANCEMENTS
 st.markdown("""
         <style>
-        /* 
-           🧠 NOTEBOOKLM ULTRA DARK THEME (Screenshot Match)
+        /*
+           🧠 NOTEBOOKLM ULTRA DARK THEME (Screenshot Match + ENHANCED)
            Background: #131314
            Surface: #1E1F20
            Border: #3C4043
@@ -750,53 +783,88 @@ st.markdown("""
         }
         [data-testid="stSidebar"] hr { margin: 0; }
 
-        /* Input Fields */
-        .stTextInput input, .stTextArea textarea {
+        /* Input Fields - ENHANCED */
+        .stTextInput input, .stTextArea textarea, .stSelectbox select {
             background-color: #1E1F20 !important;
             color: #E8EAED !important;
             border: 1px solid #3C4043 !important;
             border-radius: 8px !important;
+            transition: all 0.2s ease !important;
         }
-        
-        /* Buttons */
+
+        .stTextInput input:focus, .stTextArea textarea:focus {
+            border-color: #8AB4F8 !important;
+            box-shadow: 0 0 0 2px rgba(138, 180, 248, 0.2) !important;
+        }
+
+        /* Buttons - ENHANCED */
         .stButton > button {
             background-color: #8AB4F8 !important;
             color: #131314 !important;
-            border-radius: 20px !important; /* Pill style */
+            border-radius: 20px !important;
             font-weight: 600 !important;
             border: none !important;
             padding: 0.5rem 1.2rem !important;
+            transition: all 0.2s ease !important;
+            cursor: pointer !important;
         }
-        .stButton > button:hover { opacity: 0.9; transform: translateY(-1px); }
+        .stButton > button:hover {
+            opacity: 0.9 !important;
+            transform: translateY(-2px) !important;
+            box-shadow: 0 4px 12px rgba(138, 180, 248, 0.3) !important;
+        }
+        .stButton > button:active {
+            transform: translateY(0) scale(0.98) !important;
+        }
 
         /* Secondary Button (Outline) */
         button[kind="secondary"] {
             background-color: transparent !important;
             border: 1px solid #5F6368 !important;
             color: #E8EAED !important;
+            transition: all 0.2s ease !important;
+        }
+        button[kind="secondary"]:hover {
+            border-color: #8AB4F8 !important;
+            background-color: rgba(138, 180, 248, 0.1) !important;
         }
 
-        /* Tabs */
-        .stTabs [data-baseweb="tab-list"] { gap: 20px; }
+        /* Tabs - ENHANCED */
+        .stTabs [data-baseweb="tab-list"] {
+            gap: 20px;
+            border-bottom: 1px solid #3C4043;
+        }
         .stTabs [data-baseweb="tab"] {
-            height: 40px; white-space: nowrap;
+            height: 40px;
+            white-space: nowrap;
             background-color: transparent !important;
             color: #9AA0A6 !important;
             border-bottom: 2px solid transparent !important;
+            transition: all 0.2s ease !important;
+        }
+        .stTabs [data-baseweb="tab"]:hover {
+            color: #E8EAED !important;
         }
         .stTabs [aria-selected="true"] {
             color: #8AB4F8 !important;
             border-bottom: 2px solid #8AB4F8 !important;
+            font-weight: 600 !important;
         }
 
-        /* Metrics */
+        /* Metrics - ENHANCED */
         div[data-testid="metric-container"] {
             background-color: #1E1F20;
-            padding: 10px; border-radius: 12px;
+            padding: 10px;
+            border-radius: 12px;
             border: 1px solid #3C4043;
+            transition: all 0.2s ease;
+        }
+        div[data-testid="metric-container"]:hover {
+            border-color: #8AB4F8;
+            box-shadow: 0 2px 8px rgba(138, 180, 248, 0.2);
         }
 
-        /* Custom Alert Card */
+        /* Custom Alert Card - ENHANCED */
         .custom-alert {
             background-color: #1E1F20;
             border: 1px solid #3C4043;
@@ -804,9 +872,10 @@ st.markdown("""
             padding: 20px;
             border-radius: 12px;
             text-align: center;
+            transition: all 0.2s ease;
         }
-        
-        /* STUDIO CARDS (Right Panel Grid) */
+
+        /* STUDIO CARDS (Right Panel Grid) - ENHANCED */
         .studio-card {
             background-color: #1E1F20;
             border: 1px solid #3C4043;
@@ -820,8 +889,122 @@ st.markdown("""
         .studio-card:hover {
             border-color: #8AB4F8;
             background-color: #27282A;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(138, 180, 248, 0.15);
         }
-        
+
+        /* Progress Status Card - NEW */
+        .progress-status-card {
+            background: linear-gradient(135deg, #1E1F20 0%, #27282A 100%);
+            border: 1px solid #3C4043;
+            border-radius: 16px;
+            padding: 24px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            margin: 20px 0;
+        }
+
+        /* Progress Step - NEW */
+        .progress-step {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background-color: #1E1F20;
+            border-left: 3px solid #8AB4F8;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        .progress-step.active {
+            border-left-color: #8AB4F8;
+            background-color: rgba(138, 180, 248, 0.1);
+        }
+        .progress-step.complete {
+            border-left-color: #34A853;
+            background-color: rgba(52, 168, 83, 0.1);
+        }
+
+        /* Status Badge - NEW */
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .status-badge.info {
+            background-color: rgba(138, 180, 248, 0.2);
+            color: #8AB4F8;
+        }
+        .status-badge.success {
+            background-color: rgba(52, 168, 83, 0.2);
+            color: #34A853;
+        }
+        .status-badge.warning {
+            background-color: rgba(251, 188, 4, 0.2);
+            color: #FBBC04;
+        }
+
+        /* Feature Card - NEW */
+        .feature-card {
+            background: linear-gradient(135deg, #1E1F20 0%, #252627 100%);
+            border: 1px solid #3C4043;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 12px 0;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            border-color: #8AB4F8;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(138, 180, 248, 0.2);
+        }
+
+        /* Smooth Transitions - NEW */
+        * {
+            transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+        }
+
+        /* Scrollbar Styling - NEW */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #131314;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #3C4043;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #5F6368;
+        }
+
+        /* Animations - NEW */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        @keyframes slideIn {
+            from { transform: translateX(-20px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Toast Notifications - NEW */
+        .stToast {
+            background-color: #1E1F20 !important;
+            border: 1px solid #3C4043 !important;
+            border-radius: 12px !important;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
+        }
+
         #MainMenu {visibility: hidden;}
         footer {visibility: hidden;}
         header {visibility: hidden;}
@@ -854,31 +1037,103 @@ with st.sidebar:
         url = st.text_input("URL", placeholder="Paste Link...", label_visibility="collapsed")
         if st.button("➕ Add Source", use_container_width=True):
              if url:
-                # (Keep existing analysis logic, just indented)
-                 with st.spinner("🚀 Analyzing..."):
-                     if 'preview_reel' in st.session_state: del st.session_state['preview_reel']
-                     reel_data = download_reel(url)
-                     if reel_data:
-                         video_path = reel_data["video_path"]
-                         with st.spinner("🧠 Processing..."):
-                             audio_file = convert_video_to_audio(video_path)
-                             if transcription_engine == "OpenAI Whisper (Local - Better Quality)":
-                                 result = transcribe_with_whisper(audio_file, model_size)
-                                 transcript_text = result["text"] if result else ""
-                             else:
-                                 result = transcribe_with_assemblyai(audio_file)
-                                 transcript_text = result.text if result else ""
-                             
-                             # Simple Auto-Title
-                             st.session_state['preview_source'] = {
-                                 'url': url, 'text': transcript_text, 'metadata': reel_data,
-                                 'title': "New Source", 'category': "Inbox", 'summary': ""
-                             }
-                             db_manager.save_transcript(url, transcript_text, metadata=reel_data)
-                             st.success("Source Added!")
-                             st.rerun()
-                     else:
-                         st.error("Failed to load source.")
+                # Enhanced Progress Tracking
+                if 'preview_reel' in st.session_state: del st.session_state['preview_reel']
+
+                # Create progress container
+                progress_container = st.container()
+                with progress_container:
+                    st.markdown("""
+                    <div class="progress-status-card">
+                        <div style="font-size: 20px; margin-bottom: 16px;">🚀 Processing Your Video</div>
+                        <div style="color: #9AA0A6; font-size: 14px;">This usually takes 30-60 seconds</div>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                    progress_bar = st.progress(0)
+                    status_text = st.empty()
+
+                    # Step 1: Download
+                    status_text.markdown("""
+                    <div class="progress-step active">
+                        <span style="font-size: 18px; margin-right: 12px;">📥</span>
+                        <span><strong>Downloading video from server...</strong></span>
+                    </div>
+                    """, unsafe_allow_html=True)
+                    progress_bar.progress(10)
+
+                    reel_data = download_reel(url)
+
+                    if reel_data:
+                        progress_bar.progress(30)
+                        video_path = reel_data["video_path"]
+
+                        # Step 2: Extract Audio
+                        status_text.markdown("""
+                        <div class="progress-step active">
+                            <span style="font-size: 18px; margin-right: 12px;">🔍</span>
+                            <span><strong>Extracting audio track...</strong></span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        progress_bar.progress(40)
+
+                        audio_file = convert_video_to_audio(video_path)
+
+                        # Step 3: Transcribe
+                        status_text.markdown("""
+                        <div class="progress-step active">
+                            <span style="font-size: 18px; margin-right: 12px;">🎙️</span>
+                            <span><strong>Running AI transcription model...</strong></span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        progress_bar.progress(50)
+
+                        if transcription_engine == "OpenAI Whisper (Local - Better Quality)":
+                            result = transcribe_with_whisper(audio_file, model_size)
+                            transcript_text = result["text"] if result else ""
+                        else:
+                            result = transcribe_with_assemblyai(audio_file)
+                            transcript_text = result.text if result else ""
+
+                        progress_bar.progress(90)
+
+                        # Step 4: Complete
+                        status_text.markdown("""
+                        <div class="progress-step complete">
+                            <span style="font-size: 18px; margin-right: 12px;">✅</span>
+                            <span><strong>Complete! Saving to database...</strong></span>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        progress_bar.progress(100)
+
+                        # Simple Auto-Title
+                        st.session_state['preview_source'] = {
+                            'url': url, 'text': transcript_text, 'metadata': reel_data,
+                            'title': "New Source", 'category': "Inbox", 'summary': ""
+                        }
+                        db_manager.save_transcript(url, transcript_text, metadata=reel_data)
+
+                        # Success message
+                        st.markdown("""
+                        <div class="progress-status-card" style="border-color: #34A853;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">🎉</div>
+                            <div style="font-size: 18px; font-weight: 600; color: #34A853;">Source Added Successfully!</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+
+                        st.toast("✅ Source added successfully!", icon="✅")
+                        st.balloons()
+                        st.rerun()
+                    else:
+                        progress_bar.progress(0)
+                        st.markdown("""
+                        <div class="progress-status-card" style="border-color: #EA4335;">
+                            <div style="font-size: 48px; margin-bottom: 12px;">❌</div>
+                            <div style="font-size: 18px; font-weight: 600; color: #EA4335;">Failed to Load Source</div>
+                            <div style="color: #9AA0A6; margin-top: 8px;">Please check the URL and try again</div>
+                        </div>
+                        """, unsafe_allow_html=True)
+                        st.toast("❌ Failed to download video", icon="❌")
 
     st.markdown("---")
     
@@ -1103,6 +1358,7 @@ with col_center: # Center Workspace (Chat/Guide)
                             # Update Session State AND Database
                             new_analysis = resp.choices[0].message.content
                             st.session_state['viral_analysis'] = new_analysis
+                            st.toast("✅ Viral analysis complete!", icon="✅")
                             # Optional: Update DB here if we had an update function
 
                 # A2. Mind Map Trigger
@@ -1119,6 +1375,7 @@ with col_center: # Center Workspace (Chat/Guide)
                              resp = openai_client.chat.completions.create(model="gpt-4", messages=[{"role": "system", "content": "You are a Graphviz Generator. Output DOT code only."}, {"role": "user", "content": dot_prompt}])
                              dot_code = resp.choices[0].message.content.replace("```dot", "").replace("```", "").strip()
                              st.session_state['viral_map'] = dot_code
+                             st.toast("✅ Mind map generated!", icon="✅")
                             
                 # B. Visual Analysis Trigger
                 if st.button("👁️ Deep Visual Analysis (GPT-4o)", use_container_width=True):
@@ -1159,22 +1416,66 @@ with col_center: # Center Workspace (Chat/Guide)
                          if re_download: video_path = re_download["video_path"]
 
                      if video_path and os.path.exists(video_path) and openai_client:
-                         with st.spinner("🎞️  Extracting & Analyzing Timeline (This takes ~30s)..."):
-                             frames, stamps = generate_visual_timeline(video_path, interval=5)
-                             
-                             # Analyze with GPT-4o
-                             prompt_content = [{"type": "text", "text": "Analyze this sequence of frames from a video (every 5 seconds). Describe exactly what is happening visually in each shot to explain the storytelling flow."}]
-                             for i, f in enumerate(frames):
-                                 prompt_content.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{f}"}})
-                                 prompt_content.append({"type": "text", "text": f"Frame at {stamps[i]}s"})
-                             
-                             resp = openai_client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt_content}], max_tokens=1000)
-                             
-                             st.session_state['visual_timeline'] = {
-                                 "analysis": resp.choices[0].message.content,
-                                 "frames": frames,
-                                 "timestamps": stamps
-                             }
+                         # Enhanced progress tracking
+                         progress_bar = st.progress(0)
+                         status_text = st.empty()
+
+                         # Step 1: Extract frames
+                         status_text.markdown("""
+                         <div class="progress-step active">
+                             <span style="font-size: 18px; margin-right: 12px;">🎞️</span>
+                             <span><strong>Extracting frames from video...</strong></span>
+                         </div>
+                         """, unsafe_allow_html=True)
+                         progress_bar.progress(20)
+
+                         frames, stamps = generate_visual_timeline(video_path, interval=5)
+
+                         # Step 2: Prepare analysis
+                         status_text.markdown("""
+                         <div class="progress-step active">
+                             <span style="font-size: 18px; margin-right: 12px;">🤖</span>
+                             <span><strong>Preparing GPT-4o Vision analysis...</strong></span>
+                         </div>
+                         """, unsafe_allow_html=True)
+                         progress_bar.progress(40)
+
+                         # Analyze with GPT-4o
+                         prompt_content = [{"type": "text", "text": "Analyze this sequence of frames from a video (every 5 seconds). Describe exactly what is happening visually in each shot to explain the storytelling flow."}]
+
+                         # Step 3: Processing frames
+                         status_text.markdown("""
+                         <div class="progress-step active">
+                             <span style="font-size: 18px; margin-right: 12px;">🔍</span>
+                             <span><strong>Processing {len(frames)} frames with AI...</strong></span>
+                         </div>
+                         """, unsafe_allow_html=True)
+                         progress_bar.progress(60)
+
+                         for i, f in enumerate(frames):
+                             prompt_content.append({"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{f}"}})
+                             prompt_content.append({"type": "text", "text": f"Frame at {stamps[i]}s"})
+
+                         progress_bar.progress(80)
+
+                         # Step 4: Final analysis
+                         resp = openai_client.chat.completions.create(model="gpt-4o", messages=[{"role": "user", "content": prompt_content}], max_tokens=1000)
+
+                         status_text.markdown("""
+                         <div class="progress-step complete">
+                             <span style="font-size: 18px; margin-right: 12px;">✅</span>
+                             <span><strong>Timeline analysis complete!</strong></span>
+                         </div>
+                         """, unsafe_allow_html=True)
+                         progress_bar.progress(100)
+
+                         st.session_state['visual_timeline'] = {
+                             "analysis": resp.choices[0].message.content,
+                             "frames": frames,
+                             "timestamps": stamps
+                         }
+
+                         st.toast("✅ Visual timeline generated!", icon="✅")
 
                 st.markdown("---")
                 
@@ -1185,12 +1486,13 @@ with col_center: # Center Workspace (Chat/Guide)
                              skill_prompt = f"Create a reusable SKILL.md instruction file based on this analysis:\n{st.session_state['viral_analysis']}"
                              resp = openai_client.chat.completions.create(model="gpt-4", messages=[{"role": "user", "content": skill_prompt}])
                              skill_content = resp.choices[0].message.content
-                             
+
                              # Save file
                              safe_title = "".join(x for x in selected_source.get('metadata', {}).get('title', 'skill') if x.isalnum())
                              with open(f"skills/{safe_title}.md", "w") as f:
                                  f.write(skill_content)
                              st.success(f"Skill Saved: {safe_title}")
+                             st.toast("✅ Skill extracted successfully!", icon="✅")
 
                 if st.button("📝 Generate Copycat Script", use_container_width=True):
                      if openai_client:
@@ -1199,6 +1501,7 @@ with col_center: # Center Workspace (Chat/Guide)
                              usr_prompt = f"Rewrite this video structure for a generic Personal Brand regarding 'Growth':\n{selected_source.get('text')}"
                              resp = openai_client.chat.completions.create(model="gpt-4", messages=[{"role": "system", "content": sys_prompt}, {"role": "user", "content": usr_prompt}])
                              st.session_state['recreation_script'] = resp.choices[0].message.content
+                             st.toast("✅ Copycat script generated!", icon="✅")
 
             with col2:
                 # The WIDE Display Area

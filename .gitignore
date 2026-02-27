@@ -8,3 +8,6 @@ reel/
 skills/
 overview_audio.mp3
 .DS_Store
+export/
+.streamlit/
+.vercel/
