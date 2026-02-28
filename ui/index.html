@@ -3,262 +3,296 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Jay’s Cool Instagram Transcribe</title>
+  <title>Reel Transcribe | Vercel</title>
   <style>
     :root {
-      --bg: #0b1020;
-      --card: #111a33;
-      --blue: #3aa0ff;
-      --blue-2: #6cc2ff;
-      --text: #e9f0ff;
-      --muted: #a7b4d6;
-      --accent: #1e2a52;
-      --glow: rgba(58, 160, 255, 0.35);
+      --bg: #0a1226;
+      --card: #111d3a;
+      --line: #223665;
+      --primary: #4ea3ff;
+      --primary-2: #7bc6ff;
+      --text: #ecf2ff;
+      --muted: #9eb0d8;
+      --ok: #3ddc97;
+      --error: #ff6f6f;
     }
 
     * { box-sizing: border-box; }
 
     body {
       margin: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Arial, sans-serif;
       color: var(--text);
-      background: radial-gradient(1200px 600px at 10% -10%, rgba(58,160,255,0.35), transparent),
-                  radial-gradient(900px 500px at 90% 0%, rgba(108,194,255,0.25), transparent),
-                  var(--bg);
+      background:
+        radial-gradient(900px 500px at -10% -20%, rgba(78, 163, 255, 0.35), transparent),
+        radial-gradient(1000px 600px at 110% 0%, rgba(123, 198, 255, 0.2), transparent),
+        var(--bg);
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       min-height: 100vh;
     }
 
-    .container {
-      max-width: 1100px;
+    .wrap {
+      max-width: 980px;
       margin: 0 auto;
-      padding: 48px 20px 80px;
+      padding: 36px 16px 64px;
     }
 
-    .header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .logo {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      box-shadow: 0 8px 24px var(--glow);
+    .panel {
+      background: linear-gradient(180deg, rgba(17,29,58,0.96), rgba(11,21,45,0.95));
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 18px;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.35);
     }
 
     h1 {
-      margin: 0;
+      margin: 0 0 8px;
       font-size: 28px;
-      letter-spacing: 0.3px;
     }
 
-    .tagline {
-      margin: 6px 0 0;
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .cta {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .btn {
-      padding: 12px 18px;
-      border-radius: 10px;
-      border: 1px solid transparent;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: none;
-      color: var(--text);
-      background: linear-gradient(135deg, var(--blue), var(--blue-2));
-      box-shadow: 0 10px 28px var(--glow);
-    }
-
-    .btn.secondary {
-      background: transparent;
-      border-color: #2a3a6a;
-      color: var(--text);
-      box-shadow: none;
-    }
-
-    .hero {
-      margin-top: 48px;
-      display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 28px;
-      align-items: center;
-    }
-
-    .hero h2 {
-      font-size: 40px;
-      margin: 0 0 12px;
-      line-height: 1.1;
-    }
-
-    .hero p {
+    .sub {
       margin: 0 0 18px;
       color: var(--muted);
-      font-size: 16px;
-      line-height: 1.6;
+      line-height: 1.5;
     }
 
-    .card {
-      background: linear-gradient(180deg, rgba(17,26,51,0.9), rgba(12,19,38,0.9));
-      border: 1px solid #1e2a52;
-      border-radius: 16px;
-      padding: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.35);
-    }
-
-    .stats {
+    .row {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin-top: 20px;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      margin-bottom: 12px;
     }
 
-    .stat {
-      padding: 14px;
-      border-radius: 12px;
-      background: #0e1630;
-      border: 1px solid #1d2a56;
-      text-align: center;
+    input[type="url"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #35508f;
+      background: #0c1835;
+      color: var(--text);
+      outline: none;
     }
 
-    .stat .value {
-      font-size: 20px;
+    input[type="url"]:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(78, 163, 255, 0.2);
+    }
+
+    button {
+      border: none;
+      border-radius: 10px;
+      padding: 12px 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #041129;
       font-weight: 700;
+      cursor: pointer;
     }
 
-    .stat .label {
-      color: var(--muted);
-      font-size: 12px;
+    button[disabled] {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
-    .features {
-      margin-top: 48px;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-    }
-
-    .feature {
-      padding: 18px;
-      border-radius: 14px;
-      background: #0f1733;
-      border: 1px solid #1f2c58;
-    }
-
-    .feature h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-
-    .feature p {
-      margin: 0;
+    .meta {
+      margin-top: 8px;
       color: var(--muted);
       font-size: 13px;
       line-height: 1.5;
     }
 
-    .footer {
-      margin-top: 60px;
+    .status {
+      margin-top: 16px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #2f487f;
+      background: #0c1731;
+      font-size: 14px;
       color: var(--muted);
-      font-size: 12px;
-      text-align: center;
     }
 
-    @media (max-width: 900px) {
-      .hero {
-        grid-template-columns: 1fr;
-      }
+    .status.ok {
+      border-color: rgba(61, 220, 151, 0.5);
+      color: var(--ok);
+    }
 
-      .features {
-        grid-template-columns: 1fr;
-      }
+    .status.error {
+      border-color: rgba(255, 111, 111, 0.45);
+      color: var(--error);
+    }
 
-      .stats {
+    .output {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 220px;
+      resize: vertical;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #35508f;
+      background: #0b1630;
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    .footer {
+      margin-top: 14px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 740px) {
+      .row {
         grid-template-columns: 1fr;
       }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="header">
-      <div class="brand">
-        <div class="logo"></div>
-        <div>
-          <h1>Jay’s Cool Instagram Transcribe</h1>
-          <div class="tagline">Turn reels into transcripts, insights, and reusable content in minutes.</div>
-        </div>
-      </div>
-      <div class="cta">
-        <a class="btn" href="#start">Launch App</a>
-        <a class="btn secondary" href="#features">See Features</a>
-      </div>
-    </div>
+  <main class="wrap">
+    <section class="panel">
+      <h1>Reel Transcribe (Vercel Mode)</h1>
+      <p class="sub">
+        Paste a public audio/video URL, generate transcript with AssemblyAI, then summarize with OpenAI.
+        This mode avoids local Docker/FFmpeg hosting.
+      </p>
 
-    <section class="hero" id="start">
-      <div>
-        <h2>Transcribe, Analyze, and Repurpose Reels.</h2>
-        <p>Upload an Instagram reel, get a clean transcript, discover viral hooks, generate reports, podcasts, slides, and a storyboard—all in one modern, blue‑toned workspace.</p>
-        <div class="stats">
-          <div class="stat">
-            <div class="value">10+</div>
-            <div class="label">Output Formats</div>
-          </div>
-          <div class="stat">
-            <div class="value">4</div>
-            <div class="label">AI Engines</div>
-          </div>
-          <div class="stat">
-            <div class="value">1</div>
-            <div class="label">Clean Workflow</div>
-          </div>
-        </div>
+      <div class="row">
+        <input id="mediaUrl" type="url" placeholder="https://...mp3 or ...mp4" />
+        <button id="startBtn">Transcribe</button>
       </div>
-      <div class="card">
-        <h3>What you get</h3>
-        <ul style="margin: 12px 0 0; padding-left: 18px; color: var(--muted); line-height: 1.7;">
-          <li>Full transcript + editing</li>
-          <li>Viral analysis + hook variations</li>
-          <li>Mind maps + timelines</li>
-          <li>Reports, slides, PDF guides</li>
-          <li>Podcast scripts + audio</li>
-          <li>Storyboard + recreate plan</li>
-        </ul>
+
+      <div class="meta">
+        For many Instagram links, direct media access can fail due auth/rate limits.
+        If that happens, use an accessible media URL or your Ubuntu server flow.
       </div>
+
+      <div id="status" class="status">Idle</div>
+
+      <div class="output">
+        <textarea id="transcript" placeholder="Transcript will appear here..."></textarea>
+        <button id="summaryBtn" disabled>Generate Summary</button>
+        <textarea id="summary" placeholder="Summary will appear here..."></textarea>
+      </div>
+
+      <div class="footer">API routes: /api/transcribe_start, /api/transcribe_status, /api/summarize</div>
     </section>
+  </main>
 
-    <section class="features" id="features">
-      <div class="feature">
-        <h3>Smart Transcription</h3>
-        <p>Local Whisper or cloud engines with a clean, editable transcript.</p>
-      </div>
-      <div class="feature">
-        <h3>Viral Breakdown</h3>
-        <p>Analyze why it works, identify hooks, and generate better ones.</p>
-      </div>
-      <div class="feature">
-        <h3>Creator Studio</h3>
-        <p>Create slides, PDFs, storyboards, and multi‑video campaigns.</p>
-      </div>
-    </section>
+  <script>
+    const mediaUrlInput = document.getElementById('mediaUrl');
+    const startBtn = document.getElementById('startBtn');
+    const statusEl = document.getElementById('status');
+    const transcriptEl = document.getElementById('transcript');
+    const summaryBtn = document.getElementById('summaryBtn');
+    const summaryEl = document.getElementById('summary');
 
-    <div class="footer">© 2026 Jay’s Cool Instagram Transcribe</div>
-  </div>
+    function setStatus(message, type) {
+      statusEl.textContent = message;
+      statusEl.className = 'status' + (type ? ` ${type}` : '');
+    }
+
+    async function wait(ms) {
+      return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    async function pollTranscript(id) {
+      const maxAttempts = 50;
+      let attempt = 0;
+
+      while (attempt < maxAttempts) {
+        attempt += 1;
+        setStatus(`Processing transcript... (${attempt}/${maxAttempts})`, '');
+
+        const res = await fetch(`/api/transcribe_status?id=${encodeURIComponent(id)}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.error || 'Status polling failed.');
+        }
+
+        if (data.status === 'completed') {
+          return data.text || '';
+        }
+
+        if (data.status === 'error') {
+          throw new Error(data.error || 'AssemblyAI returned an error status.');
+        }
+
+        await wait(3000);
+      }
+
+      throw new Error('Timed out waiting for transcript completion.');
+    }
+
+    startBtn.addEventListener('click', async () => {
+      const mediaUrl = mediaUrlInput.value.trim();
+      if (!mediaUrl) {
+        setStatus('Enter a media URL first.', 'error');
+        return;
+      }
+
+      startBtn.disabled = true;
+      summaryBtn.disabled = true;
+      transcriptEl.value = '';
+      summaryEl.value = '';
+
+      try {
+        setStatus('Creating transcript job...', '');
+        const createRes = await fetch('/api/transcribe_start', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ mediaUrl }),
+        });
+
+        const createData = await createRes.json();
+        if (!createRes.ok) {
+          throw new Error(createData.error || 'Failed to create transcript job.');
+        }
+
+        const text = await pollTranscript(createData.id);
+        transcriptEl.value = text;
+        summaryBtn.disabled = text.trim().length < 20;
+        setStatus('Transcript complete.', 'ok');
+      } catch (error) {
+        setStatus(error.message || String(error), 'error');
+      } finally {
+        startBtn.disabled = false;
+      }
+    });
+
+    summaryBtn.addEventListener('click', async () => {
+      const text = transcriptEl.value.trim();
+      if (text.length < 20) {
+        setStatus('Transcript is too short for summary.', 'error');
+        return;
+      }
+
+      summaryBtn.disabled = true;
+      try {
+        setStatus('Generating summary...', '');
+        const res = await fetch('/api/summarize', {
+          method: 'POST',
+          headers: { 'content-type': 'application/json' },
+          body: JSON.stringify({ text }),
+        });
+
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || 'Summary generation failed.');
+        }
+
+        summaryEl.value = data.summary || '';
+        setStatus('Summary complete.', 'ok');
+      } catch (error) {
+        setStatus(error.message || String(error), 'error');
+      } finally {
+        summaryBtn.disabled = false;
+      }
+    });
+  </script>
 </body>
 </html>

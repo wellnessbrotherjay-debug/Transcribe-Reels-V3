@@ -3,6 +3,32 @@
 ## Project Overview
 The **Reel Memory Engine** is a specialized AI dashboard designed to turn ephemeral short-form video content (Instagram Reels) into a permanent, searchable knowledge base. It functions similarly to Google's "NotebookLM," allowing users to chat with their video content and repurpose it into various assets like mind maps, slide decks, and audio summaries.
 
+## Deploy Modes
+
+### 1) Vercel Mode (single deployment)
+- Frontend: `ui/index.html`
+- API routes: `api/*.js`
+- No Docker required
+- Required env vars in Vercel:
+  - `ASSEMBLYAI_API_KEY`
+  - `OPENAI_API_KEY`
+
+Deploy:
+1. Import this repo in Vercel.
+2. Keep `vercel.json` in root.
+3. Add the two env vars in Project Settings.
+4. Deploy.
+
+Notes:
+- This mode expects a **publicly accessible media URL** (mp3/mp4/etc).
+- Many Instagram links are not directly fetchable server-side due auth/rate limits.
+- For full local reel downloading + Whisper/FFmpeg processing, use Ubuntu mode.
+
+### 2) Ubuntu Mode (full feature set)
+- Keep current Streamlit + Docker/FFmpeg flow.
+- Use this when you need local/download-heavy processing (yt-dlp/instaloader/Whisper models).
+- Existing `Dockerfile` and start scripts remain valid for this path.
+
 ## 🏗 Tech Stack & Architecture
 
 ### Core System

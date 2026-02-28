@@ -1,0 +1,14 @@
+version: "3.9"
+
+services:
+  transcribe-reels:
+    build: .
+    container_name: transcribe-reels
+    ports:
+      - "8501:8501"
+    env_file:
+      - .env
+    volumes:
+      - ./export:/app/export
+      - ./reel:/app/reel
+    restart: unless-stopped
