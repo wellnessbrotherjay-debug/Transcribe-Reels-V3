@@ -11,4 +11,5 @@ services:
     volumes:
       - ./export:/app/export
       - ./reel:/app/reel
+      - ./.cache:/app/.cache
     restart: unless-stopped
