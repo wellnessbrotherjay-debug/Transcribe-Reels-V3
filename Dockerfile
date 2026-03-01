@@ -23,8 +23,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 WORKDIR /app
 
-COPY requirements_new.txt /app/requirements_new.txt
-RUN pip install -r /app/requirements_new.txt
+COPY requirements_deployment.txt /app/requirements_deployment.txt
+RUN pip install -r /app/requirements_deployment.txt
 
 COPY . /app
 
